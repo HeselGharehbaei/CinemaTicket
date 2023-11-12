@@ -38,8 +38,8 @@ class Bank(ABC):
 
     def __repr__(self) -> str:
         dic = vars(self)
-        dic["rial"] == self.to_rial(self._balance)
-        return dic
+        dic["rial"] = self.to_rial(self._balance)
+        return str(dic)
 
     def __eq__(self, other: "Bank") -> bool:
         return self._balance == other._balance
