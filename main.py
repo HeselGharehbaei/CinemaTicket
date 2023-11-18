@@ -1,4 +1,4 @@
-from user import User
+from user import User, UserType
 import os
 
 
@@ -18,9 +18,10 @@ def receive_information(key):
             phone_number = None
         return  username, password, birthday, phone_number 
     elif key == 2:
+        user_type = input("1 ----> MANAGER\n2 ----> NORMAL_USER\nEnter you user type:")
         username = input("username: ")
         password = input("password: ")        
-        return  username, password
+        return  user_type, username, password
     elif key == 11:
         new_username = input("new username: ")   
         return  new_username
@@ -54,8 +55,12 @@ while True:
             User.sign_up(username, password, birthday, phone_number)
         elif key == "2":  
             os.system("clear")
-            username, password = receive_information(2)        
-            if User.sign_in(username, password):
+            user_type, username, password = receive_information(2) 
+            if user_type == '1':
+                user_type = UserType.MANAGER
+            elif user_type == '2':
+                user_type = UserType.NORMAL_USER 
+            if User.sign_in(username, password, user_type):
                 while True:
                     key = input("According to the requested operation,"
                     " enter one of the following options:\n"
@@ -84,7 +89,7 @@ while True:
                             "key:") 
                             if key == "8":
                                 os.system("clear")
-                                print(User.sign_in(username, password))
+                                print(User.sign_in(username, password, user_type))
                             elif key == "9":
                                 os.system("clear")
                                 while True:

@@ -1,6 +1,12 @@
 from uuid import uuid4
 from datetime import datetime
 import json
+from enum import Enum
+
+
+class UserType(Enum):
+    MANAGER = 1
+    NORMAL_USER = 2
 
 
 class User:  
@@ -9,7 +15,7 @@ class User:
     This class is made to register users
     """
 
-    def __init__(self, username: str, password: str, birthday: str, phone_number= None, id= None, join_date= None) -> str | None:
+    def __init__(self, username: str, password: str, birthday: str, phone_number= None, id= None, join_date= None, user_type= 'NORMAL_USER') -> str | None:
         """
         Initializing an instance of the User class
         """
@@ -29,6 +35,10 @@ class User:
             self.join_date= datetime.strptime(join_date, '%d/%m/%Y').date()
         else:  
             self.join_date = datetime.now().date()
+        if user_type == 'NORMAL_USER':
+            self.user_type = UserType.NORMAL_USER
+        elif user_type == 'MANAGER':
+            self.user_type = UserType.MANAGER       
 
 
     @staticmethod
@@ -56,7 +66,8 @@ class User:
             "phone_number": self.phone_number,
             "birthday": self.birthday.strftime('%d/%m/%Y'),
             "id": self.id,
-            "join_date": self.join_date.strftime('%d/%m/%Y'),        
+            "join_date": self.join_date.strftime('%d/%m/%Y'),  
+            "user_type": self.user_type.name,     
         }
 
 
@@ -69,7 +80,7 @@ class User:
  #-----------------------------------------------------------key = "1"-----------------------------------------------------------#
 
     @classmethod
-    def sign_up(cls, username: str, password: str, birthday:str, phone_number:str = None):
+    def sign_up(cls, username: str, password: str, birthday:str, phone_number:str = None, user_type= 'NORMAL_USER')-> json:
 
         """
        This function is a classmethod and registers the user in the 
@@ -78,7 +89,7 @@ class User:
         
         if not cls.username_is_exsist_in_users_data_and_return(username):
             if cls.password_is_valid(password): 
-                new_user_account = cls(username, password, birthday, phone_number)
+                new_user_account = cls(username, password, birthday, phone_number, user_type)
                 users_data= cls.users_data()
                 users_data[username]= new_user_account.to_dict()    
                 with open('users.json', 'w') as file:
@@ -93,7 +104,7 @@ class User:
 
 
     @classmethod
-    def sign_in(cls, username: str, password: str):
+    def sign_in(cls, username: str, password: str, user_type= None)-> object:
 
         """
         This function checks the condition that the username be unique
@@ -102,9 +113,14 @@ class User:
         the_username_data= cls.username_is_exsist_in_users_data_and_return(username)
         if the_username_data:         
             if the_username_data.__password == password:
+                if the_username_data.user_type == user_type:
                     return the_username_data
-            raise ValueError("Invalid password. try again...")
-        raise ValueError("The username is not exsist. try again")   
+                else:
+                    raise ValueError("Access to this section is not allowed")
+            else:
+                raise ValueError("Invalid password. try again...")
+        else:
+            raise ValueError("The username is not exsist. try again")   
 
 #-----------------------------------------------------------key = "8"-----------------------------------------------------------#
    
