@@ -19,7 +19,7 @@ def receive_information(key):
         return  username, password, birthday, phone_number 
     elif key == 2:
         username = input("username: ")
-        password = input("password: ")
+        password = input("password: ")        
         return  username, password
     elif key == 11:
         new_username = input("new username: ")   
@@ -30,10 +30,10 @@ def receive_information(key):
             new_phone_number = None
         return  new_phone_number
     elif  key == 13:
-        old_password = input("old_password: ")
+        password = input("password: ")
         new_password = input("new password: ") 
         repeat_new_password = input("repeat new password: ") 
-        return  old_password, new_password, repeat_new_password 
+        return  password, new_password, repeat_new_password 
 
 
 while True:
@@ -54,7 +54,7 @@ while True:
             User.sign_up(username, password, birthday, phone_number)
         elif key == "2":  
             os.system("clear")
-            username, password = receive_information(2)
+            username, password = receive_information(2)        
             if User.sign_in(username, password):
                 while True:
                     key = input("According to the requested operation,"
@@ -62,9 +62,9 @@ while True:
                     "---------------------------------------\n"
                     "4 ---> Profile\n"
                     "---------------------------------------\n"    
-                    "5 ---> Cinema menu\n"
+                    "5 ---> Bank menu\n"
                     "---------------------------------------\n" 
-                    "6 ---> Bank menu\n"
+                    "6 ---> Cinema menu\n"
                     "---------------------------------------\n"
                     "7 ---> Sign out\n"
                     "---------------------------------------\n"  
@@ -88,37 +88,42 @@ while True:
                             elif key == "9":
                                 os.system("clear")
                                 while True:
-                                    key = input("According to the requested operation,"
-                                    " enter one of the following options:\n"
-                                    "---------------------------------------\n"
-                                    "11 ---> Edit username \n"
-                                    "---------------------------------------\n"    
-                                    "12 ---> Edit phone_number\n"
-                                    "---------------------------------------\n" 
-                                    "13 ---> Edit password\n"
-                                    "---------------------------------------\n"
-                                    "14 ---> Back to profile \n" 
-                                    "---------------------------------------\n" 
-                                    "key:") 
-                                    if key == "11":
-                                        os.system("clear")
-                                        new_username = receive_information(11)
-                                        User.change_username (username, new_username)
-                                        username = new_username
-                                    elif key == "12":
-                                        os.system("clear")
-                                        new_phone_number = receive_information(12)
-                                        User.change_phone_number(username, new_phone_number)
-                                    elif key == "13":
-                                        os.system("clear")
-                                        old_password, new_password, repeat_new_password = receive_information(13)
-                                        if User.valid_new_password(new_password, repeat_new_password):
-                                            User.update_password(old_password, username, new_password)
-                                        else:
-                                            continue 
-                                    elif key == "14":
-                                        os.system("clear")
-                                        break    
+                                    try:
+                                        key = input("According to the requested operation,"
+                                        " enter one of the following options:\n"
+                                        "---------------------------------------\n"
+                                        "11 ---> Edit username \n"
+                                        "---------------------------------------\n"    
+                                        "12 ---> Edit phone_number\n"
+                                        "---------------------------------------\n" 
+                                        "13 ---> Edit password\n"
+                                        "---------------------------------------\n"
+                                        "14 ---> Back to profile \n" 
+                                        "---------------------------------------\n" 
+                                        "key:") 
+                                    
+                                        if key == "11":
+                                            os.system("clear")
+                                            new_username = receive_information(11)
+                                            User.change_username (username, new_username)
+                                            username = new_username
+                                        elif key == "12":
+                                            os.system("clear")
+                                            new_phone_number = receive_information(12)
+                                            User.change_phone_number(username, new_phone_number)
+                                        elif key == "13":
+                                            os.system("clear")
+                                            password, new_password, repeat_new_password = receive_information(13)
+                                            if User.valid_new_password(new_password, repeat_new_password):
+                                                User.update_password(password, username, new_password)
+                                                password= new_password  
+                                            else:
+                                                continue 
+                                        elif key == "14":
+                                            os.system("clear")
+                                            break 
+                                    except ValueError as e:
+                                        print(str(e))    
                             elif key == "10":
                                 os.system("clear")
                                 break                    
@@ -186,4 +191,4 @@ while True:
             break            
     except ValueError as e:
         print(str(e)) 
-                     
+                
