@@ -1,59 +1,99 @@
 from uuid import uuid4
 from datetime import datetime
+import json
+from enum import Enum
 
 
-class User:   
+class UserType(Enum):
+    MANAGER = 1
+    NORMAL_USER = 2
+
+
+class User:  
 
     """
     This class is made to register users
     """
-    __users_dictionery = {}
 
-    def __init__(self, username: str, password: str, birthday:str, phone_number=None) -> str | None:
+    def __init__(self, username: str, password: str, birthday: str, phone_number= None, id= None, join_date= None, user_type= 'NORMAL_USER') -> str | None:
         """
         Initializing an instance of the User class
         """
-        self.__password = password
+
+        self.__password = password 
         self.phone_number = phone_number
-        self.id = str(uuid4())
+        if id != None:
+            self.id = id
+        else:    
+            self.id = str(uuid4())
         self.username = username
         try:
             self.birthday = datetime.strptime(birthday, '%d/%m/%Y').date()
         except :
             raise ValueError("The input format for birthday is wrong. Please try in the format dd/mm/yyyy.")  
-        self.join_date = datetime.now().date()
+        if join_date != None:
+            self.join_date= datetime.strptime(join_date, '%d/%m/%Y').date()
+        else:  
+            self.join_date = datetime.now().date()
+        if user_type == 'NORMAL_USER':
+            self.user_type = UserType.NORMAL_USER
+        elif user_type == 'MANAGER':
+            self.user_type = UserType.MANAGER       
 
 
     @staticmethod
-    def username_is_exsist(username: str):
-        if username in User.__users_dictionery:
-            return True
+    def users_data():
+        try: 
+            with open('users.json', 'r') as file:
+                users_data = json.load(file)
+            return users_data
+        except:
+            users_data = {}
+            return users_data
+                    
+
+    @classmethod
+    def username_is_exsist_in_users_data_and_return(cls, username: str):
+        if username in cls.users_data():
+            return cls(**cls.users_data()[username])
         return False
+    
+
+    def to_dict(self):
+        return{
+            "username": self.username,
+            "password": self.__password,
+            "phone_number": self.phone_number,
+            "birthday": self.birthday.strftime('%d/%m/%Y'),
+            "id": self.id,
+            "join_date": self.join_date.strftime('%d/%m/%Y'),  
+            "user_type": self.user_type.name,     
+        }
 
 
     @staticmethod
     def password_is_valid(password: str):   
         if len(password) >= 4:
             return True
-        return False    
-  
+        return False   
         
  #-----------------------------------------------------------key = "1"-----------------------------------------------------------#
 
-
     @classmethod
-    def sign_up(cls, username: str, password: str, birthday:str, phone_number:str = None):
+    def sign_up(cls, username: str, password: str, birthday:str, phone_number:str = None, user_type= 'NORMAL_USER')-> json:
 
         """
        This function is a classmethod and registers the user in the 
        user class after receiving the information
         """
-
-        if not cls.username_is_exsist(username):
+        
+        if not cls.username_is_exsist_in_users_data_and_return(username):
             if cls.password_is_valid(password): 
-
-                new_user_account = cls(username, password, birthday, phone_number)
-                cls.__users_dictionery[username] = new_user_account
+                new_user_account = cls(username, password, birthday, phone_number, user_type)
+                users_data= cls.users_data()
+                users_data[username]= new_user_account.to_dict()    
+                with open('users.json', 'w') as file:
+                    json.dump(users_data, file)               
             else:
                 raise ValueError("Enter at least four characters for password")
         else:
@@ -64,22 +104,25 @@ class User:
 
 
     @classmethod
-    def sign_in(cls, username: str, password: str):
+    def sign_in(cls, username: str, password: str, user_type= None)-> object:
 
         """
         This function checks the condition that the username be unique
         And  ntered a valid password that belongs to the user we are entering.
         """
-        
-        if cls.username_is_exsist(username):
-            if cls.__users_dictionery[username].__password == password:
-                return cls.__users_dictionery[username]
-            raise ValueError("Invalid password. try again...")
-        raise ValueError("The username is not exsist. try again")   
-
+        the_username_data= cls.username_is_exsist_in_users_data_and_return(username)
+        if the_username_data:         
+            if the_username_data.__password == password:
+                if the_username_data.user_type == user_type:
+                    return the_username_data
+                else:
+                    raise ValueError("Access to this section is not allowed")
+            else:
+                raise ValueError("Invalid password. try again...")
+        else:
+            raise ValueError("The username is not exsist. try again")   
 
 #-----------------------------------------------------------key = "8"-----------------------------------------------------------#
-
    
     def __str__(self) -> str:
         """
@@ -98,16 +141,16 @@ class User:
         """
         This function changes the username and phone number
         """  
-        if not cls.username_is_exsist(new_username):
-            cls.__users_dictionery[new_username] = cls.__users_dictionery.pop(username)
-            cls.__users_dictionery[new_username].username = new_username
-            username = new_username
+        if not cls.username_is_exsist_in_users_data_and_return(new_username):
+            users_data = cls.users_data()
+            users_data[new_username] = users_data.pop(username)
+            users_data[new_username]['username'] = new_username
+            with open('users.json', 'w') as file:
+                json.dump(users_data, file)                       
         else:
             raise ValueError("This username already exists. try again")   
 
-
-#-----------------------------------------------------------key = "11"-----------------------------------------------------------#
-    
+#-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
     
     @classmethod
     def change_phone_number(cls ,username: str, new_phone_number: str = None):
@@ -115,12 +158,12 @@ class User:
         """
         This function changes the username and phone number
         """  
-        cls.__users_dictionery[username].phone_number = new_phone_number
-
-
+        users_data = cls.users_data()
+        users_data[username]['phone_number'] = new_phone_number
+        with open('users.json', 'w') as file:
+            json.dump(users_data, file)
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
-
     @staticmethod
     def valid_new_password(new_password: str, repeat_new_password: str):
 
@@ -134,15 +177,19 @@ class User:
     
 
     @classmethod
-    def update_password(cls, old_password: str, username: str, new_password: str):
+    def update_password(cls, password: str, username: str, new_password: str):
 
         """
         Replacing the new password with the previous password of a user
         """
-        if cls.__users_dictionery[username].__password == old_password:
+        users_data = cls.users_data()
+        if users_data[username]['password'] == password:
             if cls.password_is_valid(new_password):
-                cls.__users_dictionery[username].__password = new_password
+                users_data[username]['password'] = new_password
+                with open('users.json', 'w') as file:
+                    json.dump(users_data, file)    
             else:
                 raise ValueError("Enter at least four characters for password")  
         else:
             raise ValueError("Invalid password. try again...")        
+
