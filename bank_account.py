@@ -1,20 +1,27 @@
 from bank import Bank
 import json
 from utils.exceptions import MinBalanceError, PasswordCvv2Error, TransferAmount
+from credit_card import generate_credit_card_number
 
 
 class BankAccount(Bank):
     ــMIN_BALANCE = 10_000
     transaction_fee = 100
 
-    def __init__(self, owner: str, balance: float, cvv2: str, password: str) -> None:
+    def __init__(
+        self, owner: str, balance: float, cvv2: str, password: str, id: str = None
+    ) -> None:
         super().__init__(owner, balance)
         self.cvv2 = cvv2
         self.password = password
+        if id == None:
+            self.id = generate_credit_card_number()
+        else:
+            self.id = id
         self.save_data()
 
     def save_data(self) -> None:
-        with open("data/bankaccounts.json","r+") as file:
+        with open("data/bankaccounts.json", "r+") as file:
             existing_data = json.load(file)
             file.seek(0)
             file.truncate()
@@ -27,19 +34,18 @@ class BankAccount(Bank):
             return json.load(file)
 
     @classmethod
-    def get_account(cls,owner):
+    def get_account(cls, id: str) -> object:
         accounts_data = cls.load_data()
-        dict = accounts_data[owner]
+        dict = accounts_data[id]
         dict["balance"] = dict["_balance"]
         del dict["_balance"]
         return cls(**dict)
 
     def check_infoـvalidation(self) -> bool:
-        account_data = self.get_account(self.owner)
+        account_data = self.get_account(self.id)
         return (
             True
-            if account_data.cvv2 == self.cvv2
-            and account_data.password == self.password
+            if account_data.cvv2 == self.cvv2 and account_data.password == self.password
             else False
         )
 
