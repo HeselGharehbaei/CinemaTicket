@@ -2,6 +2,7 @@ from bank import Bank
 import json
 from utils.exceptions import MinBalanceError, PasswordCvv2Error, TransferAmount
 from credit_card import generate_credit_card_number
+from random import randint
 
 
 class BankAccount(Bank):
@@ -9,15 +10,18 @@ class BankAccount(Bank):
     transaction_fee = 100
 
     def __init__(
-        self, owner: str, balance: float, cvv2: str, password: str, id: str = None
+        self, owner: str, balance: float, password: str, cvv2: str=None, id: str = None
     ) -> None:
         super().__init__(owner, balance)
-        self.cvv2 = cvv2
         self.password = password
         if id == None:
             self.id = generate_credit_card_number()
         else:
             self.id = id
+        if cvv2 == None:
+            self.cvv2 = randint(1000,9999)
+        else:
+            self.cvv2 = cvv2
         self.save_data()
 
     def save_data(self) -> None:
