@@ -51,20 +51,20 @@ class BankAccount(Bank):
 
     def __add__(self, amount: float) -> None:
         if not self.check_infoـvalidation():
-            raise PasswordCvv2Error("Password or CVV2 is wrong")
+            raise PasswordCvv2Error
         if self._balance + amount < self.MIN_BALANCE:
-            raise MinBalanceError("balance can't be below 10000 tomans")
+            raise MinBalanceError
         return super().__add__(amount)
 
     def __sub__(self, amount: float) -> None:
         if not self.check_infoـvalidation():
-            raise PasswordCvv2Error("Password or CVV2 is wrong")
+            raise PasswordCvv2Error
         if self._balance - amount < self.MIN_BALANCE:
-            raise MinBalanceError("balance can't be below 10000 tomans")
+            raise MinBalanceError
         return super().__sub__(amount)
 
     def transfer(self, other: Bank, amount: float) -> None:
         if amount < 0:
-            raise TransferAmount("you can't transfer negative amounts")
+            raise TransferAmount
         self.__sub__(amount + BankAccount.transaction_fee)
         other.__add__(amount)

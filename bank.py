@@ -16,7 +16,7 @@ class Bank(ABC):
     @balance.setter
     def balance(self, balance: float) -> float:
         if self._balance < self.MIN_BALANCE:
-            raise MinBalanceError("balance can't be below 10000 tomans")
+            raise MinBalanceError
         self._balance = balance
 
     def __add__(self, amount: float) -> None:
