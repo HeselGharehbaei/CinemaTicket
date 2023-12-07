@@ -10,7 +10,12 @@ class BankAccount(Bank):
     transaction_fee = 100
 
     def __init__(
-        self, owner: str, balance: float, password: str, cvv2: str=None, id: str = None
+        self,
+        owner: str,
+        balance: float,
+        password: str,
+        cvv2: str = None,
+        id: str = None,
     ) -> None:
         super().__init__(owner, balance)
         self.password = password
@@ -19,7 +24,7 @@ class BankAccount(Bank):
         else:
             self.id = id
         if cvv2 == None:
-            self.cvv2 = randint(1000,9999)
+            self.cvv2 = randint(1000, 9999)
         else:
             self.cvv2 = cvv2
         self.save_data()
@@ -29,7 +34,7 @@ class BankAccount(Bank):
             existing_data = json.load(file)
             file.seek(0)
             file.truncate()
-            existing_data[self.owner] = self.__dict__
+            existing_data[self.id] = self.__dict__
             json.dump(existing_data, file, indent=2)
 
     @staticmethod
@@ -45,24 +50,20 @@ class BankAccount(Bank):
         del dict["_balance"]
         return cls(**dict)
 
-    def check_infoـvalidation(self) -> bool:
+    def check_infoـvalidation(self, cvv2, password) -> bool:
         account_data = self.get_account(self.id)
         return (
             True
-            if account_data.cvv2 == self.cvv2 and account_data.password == self.password
-            else False
+            if account_data.cvv2 == cvv2 and account_data.password == password
+            else PasswordCvv2Error
         )
 
     def __add__(self, amount: float) -> None:
-        if not self.check_infoـvalidation():
-            raise PasswordCvv2Error
         if self._balance + amount < self.MIN_BALANCE:
             raise MinBalanceError
         return super().__add__(amount)
 
     def __sub__(self, amount: float) -> None:
-        if not self.check_infoـvalidation():
-            raise PasswordCvv2Error
         if self._balance - amount < self.MIN_BALANCE:
             raise MinBalanceError
         return super().__sub__(amount)
