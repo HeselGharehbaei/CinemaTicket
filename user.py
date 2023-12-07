@@ -2,6 +2,7 @@ from uuid import uuid4
 from datetime import datetime
 import json
 from enum import Enum
+from utils import exceptions
 
 
 class UserType(Enum):
@@ -15,7 +16,7 @@ class User:
     This class is made to register users
     """
 
-    def __init__(self, username: str, password: str, birthday: str, phone_number= None, id= None, join_date= None, user_type= 'NORMAL_USER') -> str | None:
+    def __init__(self, username: str, password: str, birthday: str, phone_number= None, user_type= 'NORMAL_USER', id= None, join_date= None) -> str | None:
         """
         Initializing an instance of the User class
         """
@@ -44,7 +45,7 @@ class User:
     @staticmethod
     def users_data():
         try: 
-            with open('users.json', 'r') as file:
+            with open('data/users.json', 'r') as file:
                 users_data = json.load(file)
             return users_data
         except:
@@ -92,12 +93,12 @@ class User:
                 new_user_account = cls(username, password, birthday, phone_number, user_type)
                 users_data= cls.users_data()
                 users_data[username]= new_user_account.to_dict()    
-                with open('users.json', 'w') as file:
-                    json.dump(users_data, file)               
+                with open('data/users.json', 'w') as file:
+                    json.dump(users_data, file, indent=2)               
             else:
-                raise ValueError("Enter at least four characters for password")
+                raise exceptions.PasswordLengthError
         else:
-            raise ValueError("This username already exists. try again") 
+            raise exceptions.DuplicateUsernameError
 
 
 #-----------------------------------------------------------key = "2"-----------------------------------------------------------#
@@ -116,11 +117,11 @@ class User:
                 if the_username_data.user_type == user_type:
                     return the_username_data
                 else:
-                    raise ValueError("Access to this section is not allowed")
+                    raise exceptions.AccessError
             else:
-                raise ValueError("Invalid password. try again...")
+                raise exceptions.InvalidPasswordError
         else:
-            raise ValueError("The username is not exsist. try again")   
+            raise exceptions.InvalidUsernameError
 
 #-----------------------------------------------------------key = "8"-----------------------------------------------------------#
    
@@ -145,10 +146,10 @@ class User:
             users_data = cls.users_data()
             users_data[new_username] = users_data.pop(username)
             users_data[new_username]['username'] = new_username
-            with open('users.json', 'w') as file:
-                json.dump(users_data, file)                       
+            with open('data/users.json', 'w') as file:
+                json.dump(users_data, file, indent=2)                       
         else:
-            raise ValueError("This username already exists. try again")   
+            raise exceptions.DuplicateUsernameError   
 
 #-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
     
@@ -160,8 +161,8 @@ class User:
         """  
         users_data = cls.users_data()
         users_data[username]['phone_number'] = new_phone_number
-        with open('users.json', 'w') as file:
-            json.dump(users_data, file)
+        with open('data/users.json', 'w') as file:
+            json.dump(users_data, file, indent=2)
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
     @staticmethod
@@ -173,7 +174,7 @@ class User:
         """
         if new_password == repeat_new_password:
             return True
-        raise ValueError("new password and repeated new password is not equal toghether")   
+        raise exceptions.MismatchOfPasswordsError 
     
 
     @classmethod
@@ -186,10 +187,9 @@ class User:
         if users_data[username]['password'] == password:
             if cls.password_is_valid(new_password):
                 users_data[username]['password'] = new_password
-                with open('users.json', 'w') as file:
-                    json.dump(users_data, file)    
+                with open('data/users.json', 'w') as file:
+                    json.dump(users_data, file, indent=2)    
             else:
-                raise ValueError("Enter at least four characters for password")  
+                raise exceptions.PasswordLengthError 
         else:
-            raise ValueError("Invalid password. try again...")        
-
+            raise exceptions.InvalidPasswordError      

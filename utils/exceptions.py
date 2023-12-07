@@ -17,3 +17,21 @@ class NoCapacity(Exception):
 
 class ScreenTimePassed(Exception):
     print("This ticket's screening Time has passed")
+
+class PasswordLengthError(Exception):
+    print("Enter at least four characters for password") 
+
+class DuplicateUsernameError(Exception):
+    print("This username already exists. try again")
+    
+class MismatchOfPasswordsError(Exception):
+    print("new password and repeated new password is not equal toghether")
+
+class InvalidPasswordError(Exception):
+    print("Invalid password. try again...") 
+
+class AccessError(Exception):
+    print("Access to this section is not allowed")
+
+class InvalidUsernameError(Exception):
+    print("The username is not exsist. try again")     
