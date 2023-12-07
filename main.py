@@ -1,4 +1,5 @@
 from user import User, UserType
+from bank_account import BankAccount
 import os
 
 
@@ -10,31 +11,38 @@ def receive_information(key):
     when the key value is "1" and return them
     """
     if key == 1:
-        username = input("username: ")
-        password = input("password: ")
-        phone_number = input("phone number(optional): ")
+        username = input("Username: ")
+        password = input("Password: ")
+        phone_number = input("Phone number(optional): ")
         birthday = input("Enter your date of birth in the format dd/mm/yyyy: ")
         if phone_number == "":
             phone_number = None
         return  username, password, birthday, phone_number 
     elif key == 2:
-        user_type = input("1 ----> MANAGER\n2 ----> NORMAL_USER\nEnter you user type:")
-        username = input("username: ")
-        password = input("password: ")        
+        user_type = input("1 ----> MANAGER\n2 ----> NORMAL_USER\nEnter user type:")
+        username = input("Username: ")
+        password = input("Password: ")        
         return  user_type, username, password
     elif key == 11:
-        new_username = input("new username: ")   
+        new_username = input("New username: ")   
         return  new_username
     elif key == 12:
-        new_phone_number = input("new phone number: ") 
+        new_phone_number = input("New phone number: ") 
         if new_phone_number == "":
             new_phone_number = None
         return  new_phone_number
     elif  key == 13:
-        password = input("password: ")
-        new_password = input("new password: ") 
-        repeat_new_password = input("repeat new password: ") 
+        password = input("Password: ")
+        new_password = input("New password: ") 
+        repeat_new_password = input("Repeat new password: ") 
         return  password, new_password, repeat_new_password 
+    elif key == 15:
+        name= input("Name:")
+        last_name= input("Last Name:")
+        owner= name+last_name
+        password= input("Password:")
+        balance= input("Balance:")
+        return owner, balance, password
 
 
 while True:
@@ -140,28 +148,45 @@ while True:
                             "---------------------------------------\n"    
                             "15 ---> Create account\n"
                             "---------------------------------------\n" 
-                            "16 ---> Deposit\n"
+                            "16 ---> My account\n"
                             "---------------------------------------\n"  
-                            "17 ---> View balance\n"
-                            "---------------------------------------\n"
-                            "18 ---> Withdrawal\n"
-                            "---------------------------------------\n"
-                            "19 ---> Transfer\n"
-                            "---------------------------------------\n"
-                            "20 ---> Back to main menu\n" 
-                            "---------------------------------------\n"                       
+                            "17 ---> Back to main menu\n" 
+                            "---------------------------------------\n"                     
                             "key:")
                             if key == "15":
-                                pass
+                                os.system("clear")
+                                owner, balance, password= receive_information(15)
+                                BankAccount(owner, balance, password)
                             elif key == "16":
-                                pass
+                                os.system("clear")
+                                                              
+                                while True:
+                                    key = input("According to the requested operation,"
+                                    " enter one of the following options:\n"
+                                    "---------------------------------------\n"    
+                                    "18 ---> Deposit\n"
+                                    "---------------------------------------\n"  
+                                    "19 ---> View balance\n"
+                                    "---------------------------------------\n"
+                                    "20 ---> Withdrawal\n"
+                                    "---------------------------------------\n"
+                                    "21 ---> Transfer\n"
+                                    "---------------------------------------\n"
+                                    "22 ---> Back to bank menu\n" 
+                                    "---------------------------------------\n"                       
+                                    "key:")
+                                    if key == "18":
+                                        pass
+                                    elif key == "19":
+                                        pass
+                                    elif key == "20":
+                                        pass
+                                    elif key == "21":
+                                        pass
+                                    elif key == "22":
+                                        os.system("clear")
+                                        break
                             elif key == "17":
-                                pass
-                            elif key == "18":
-                                pass
-                            elif key == "19":
-                                pass
-                            elif key == "20":
                                 os.system("clear")
                                 break
                     if key == "6":
