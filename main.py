@@ -60,7 +60,7 @@ while True:
         if key == "1":
             os.system("clear")
             username, password, birthday, phone_number = receive_information(1)
-            User.sign_up(username, password, birthday, phone_number)
+            User(username, password, birthday, phone_number)
         elif key == "2":  
             os.system("clear")
             user_type, username, password = receive_information(2) 
@@ -219,6 +219,5 @@ while True:
         elif key == "3":
             os.system("clear")
             break            
-    except ValueError as e:
-        print(str(e)) 
-                
+    except BaseException as e:
+        print(str(e))           

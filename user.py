@@ -1,8 +1,9 @@
 from uuid import uuid4
 from datetime import datetime
-import json
 from enum import Enum
 from utils import exceptions
+import os
+import pickle
 
 
 class UserType(Enum):
@@ -11,98 +12,72 @@ class UserType(Enum):
 
 
 class User:  
-
     """
     This class is made to register users
     """
-
-    def __init__(self, username: str, password: str, birthday: str, phone_number= None, user_type= 'NORMAL_USER', id= None, join_date= None) -> str | None:
+#-----------------------------------------------------------key = "1"-----------------------------------------------------------#    
+    def __init__(self, username: str, password: str, birthday: str, phone_number= None, user_type= UserType.NORMAL_USER) -> str | None:
         """
         Initializing an instance of the User class
         """
 
         self.__password = password 
         self.phone_number = phone_number
-        if id != None:
-            self.id = id
-        else:    
-            self.id = str(uuid4())
+        self.id = uuid4()
         self.username = username
         try:
             self.birthday = datetime.strptime(birthday, '%d/%m/%Y').date()
         except :
-            raise ValueError("The input format for birthday is wrong. Please try in the format dd/mm/yyyy.")  
-        if join_date != None:
-            self.join_date= datetime.strptime(join_date, '%d/%m/%Y').date()
-        else:  
-            self.join_date = datetime.now().date()
-        if user_type == 'NORMAL_USER':
-            self.user_type = UserType.NORMAL_USER
-        elif user_type == 'MANAGER':
-            self.user_type = UserType.MANAGER       
+            raise exceptions.BirthdateInputFormatError
+        self.user_type= user_type
+        self.join_date = datetime.now().date() 
+        self.save_data()        
+
+
+    def save_data(self):
+        if self.username_is_not_exsist(self.username):
+            if self.password_is_valid(self.__password):
+                users_data= self.users_data()
+                users_data[self.username]= self
+                self.save_edited_data(users_data)
+            else:
+                exceptions.PasswordLengthError       
+        else:
+            raise exceptions.DuplicateUsernameError
+        
+
+    @staticmethod
+    def save_edited_data(users_data):
+        with open('data/users.pickle', 'wb') as file:
+            pickle.dump(users_data, file) 
 
 
     @staticmethod
     def users_data():
-        try: 
-            with open('data/users.json', 'r') as file:
-                users_data = json.load(file)
-            return users_data
-        except:
-            users_data = {}
-            return users_data
-                    
+        file_path = 'data/users.pickle'
+        if os.path.isfile(file_path): 
+            with open(file_path, 'rb') as file:
+                users_data = pickle.load(file)
+        else:
+            users_data = {}  
+        return users_data 
+    
 
     @classmethod
-    def username_is_exsist_in_users_data_and_return(cls, username: str):
-        if username in cls.users_data():
-            return cls(**cls.users_data()[username])
+    def username_is_not_exsist(cls, username: str) -> bool:
+        users_data= cls.users_data()
+        if username not in users_data:
+            return True
         return False
     
 
-    def to_dict(self):
-        return{
-            "username": self.username,
-            "password": self.__password,
-            "phone_number": self.phone_number,
-            "birthday": self.birthday.strftime('%d/%m/%Y'),
-            "id": self.id,
-            "join_date": self.join_date.strftime('%d/%m/%Y'),  
-            "user_type": self.user_type.name,     
-        }
-
-
     @staticmethod
-    def password_is_valid(password: str):   
+    def password_is_valid(password: str) -> bool:   
         if len(password) >= 4:
             return True
         return False   
         
- #-----------------------------------------------------------key = "1"-----------------------------------------------------------#
-
-    @classmethod
-    def sign_up(cls, username: str, password: str, birthday:str, phone_number:str = None, user_type= 'NORMAL_USER')-> json:
-
-        """
-       This function is a classmethod and registers the user in the 
-       user class after receiving the information
-        """
-        
-        if not cls.username_is_exsist_in_users_data_and_return(username):
-            if cls.password_is_valid(password): 
-                new_user_account = cls(username, password, birthday, phone_number, user_type)
-                users_data= cls.users_data()
-                users_data[username]= new_user_account.to_dict()    
-                with open('data/users.json', 'w') as file:
-                    json.dump(users_data, file, indent=2)               
-            else:
-                raise exceptions.PasswordLengthError
-        else:
-            raise exceptions.DuplicateUsernameError
-
-
 #-----------------------------------------------------------key = "2"-----------------------------------------------------------#
-
 
     @classmethod
     def sign_in(cls, username: str, password: str, user_type= None)-> object:
@@ -111,11 +86,11 @@ class User:
         This function checks the condition that the username be unique
         And  ntered a valid password that belongs to the user we are entering.
         """
-        the_username_data= cls.username_is_exsist_in_users_data_and_return(username)
-        if the_username_data:         
-            if the_username_data.__password == password:
-                if the_username_data.user_type == user_type:
-                    return the_username_data
+        users_data= cls.users_data()
+        if not cls.username_is_not_exsist(username):         
+            if users_data[username].__password == password:
+                if users_data[username].user_type == user_type:
+                    return users_data[username]
                 else:
                     raise exceptions.AccessError
             else:
@@ -142,12 +117,11 @@ class User:
         """
         This function changes the username and phone number
         """  
-        if not cls.username_is_exsist_in_users_data_and_return(new_username):
+        if cls.username_is_not_exsist(new_username):
             users_data = cls.users_data()
             users_data[new_username] = users_data.pop(username)
-            users_data[new_username]['username'] = new_username
-            with open('data/users.json', 'w') as file:
-                json.dump(users_data, file, indent=2)                       
+            users_data[new_username].username = new_username
+            cls.save_edited_data(users_data)                    
         else:
             raise exceptions.DuplicateUsernameError   
 
@@ -160,9 +134,9 @@ class User:
         This function changes the username and phone number
         """  
         users_data = cls.users_data()
-        users_data[username]['phone_number'] = new_phone_number
-        with open('data/users.json', 'w') as file:
-            json.dump(users_data, file, indent=2)
+        users_data[username].phone_number = new_phone_number
+        cls.save_edited_data(users_data)
+
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
     @staticmethod
@@ -184,11 +158,10 @@ class User:
         Replacing the new password with the previous password of a user
         """
         users_data = cls.users_data()
-        if users_data[username]['password'] == password:
+        if users_data[username].__password == password:
             if cls.password_is_valid(new_password):
-                users_data[username]['password'] = new_password
-                with open('data/users.json', 'w') as file:
-                    json.dump(users_data, file, indent=2)    
+                users_data[username].__password = new_password
+                cls.save_edited_data(users_data)  
             else:
                 raise exceptions.PasswordLengthError 
         else:
