@@ -40,8 +40,7 @@ class Reservation:
             raise ScreenTimePassed
         # check with user:
         try:
-            user.deposit_wallet(self.movie.price)
-            user.movies_list.append(self.movie)
+            user.buy_movie(self.movie,self.final_price(user))
             self.capacity -= 1
         except:
             return "reservation failed"
@@ -63,7 +62,7 @@ class Reservation:
         coeff = 1 - (days_joined / 100)
         if user.subscription == "Gold":
             coeff *= 0.5
-        elif user.subscribtion == "Silver":
+        elif user.subscription == "Silver":
             coeff *= 0.8
         return coeff
 
