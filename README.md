@@ -12,4 +12,5 @@ BankAccount Application: Facilitates secure payment transactions using CVV2 and 
 Discount Options: Applies discounts based on specified criteria, enhancing the user experience.  
 Order History: Maintains a record of users' order history for reference.  
 
+## Menu
 ![image](https://github.com/MahsaRah99/CinemaTicket/assets/133171171/b7717532-0cec-42ed-9a9f-f559045c237a)
