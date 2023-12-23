@@ -16,7 +16,11 @@ class User:
     This class is made to register users
     """
 #-----------------------------------------------------------key = "1"-----------------------------------------------------------#    
-    def __init__(self, username: str, password: str, birthday: str, phone_number= None, user_type= UserType.NORMAL_USER) -> str | None:
+    def __init__(self, username: str, password: str, 
+                 birthday: str, phone_number= None, 
+                 user_type= UserType.NORMAL_USER,
+                 wallet=0, subscription= 'Bronze',
+                 movie_list= []) -> str | None:
         """
         Initializing an instance of the User class
         """
@@ -31,11 +35,14 @@ class User:
             raise exceptions.BirthdateInputFormatError
         self.user_type= user_type
         self.join_date = datetime.now().date() 
+        self._wallet= wallet
+        self.subscription= subscription
+        self.movie_list= movie_list
         self.save_data()        
 
 
     def save_data(self):
-        if self.username_is_not_exsist(self.username):
+        if not self.username_is_exsist(self.username):
             if self.password_is_valid(self.__password):
                 users_data= self.users_data()
                 users_data[self.username]= self
@@ -64,9 +71,9 @@ class User:
     
 
     @classmethod
-    def username_is_not_exsist(cls, username: str) -> bool:
+    def username_is_exsist(cls, username: str) -> bool:
         users_data= cls.users_data()
-        if username not in users_data:
+        if username in users_data:
             return True
         return False
     
@@ -78,7 +85,6 @@ class User:
         return False   
         
 #-----------------------------------------------------------key = "2"-----------------------------------------------------------#
-
     @classmethod
     def sign_in(cls, username: str, password: str, user_type= None)-> object:
 
@@ -87,7 +93,7 @@ class User:
         And  ntered a valid password that belongs to the user we are entering.
         """
         users_data= cls.users_data()
-        if not cls.username_is_not_exsist(username):         
+        if cls.username_is_exsist(username):         
             if users_data[username].__password == password:
                 if users_data[username].user_type == user_type:
                     return users_data[username]
@@ -105,19 +111,20 @@ class User:
         This function use to show user
         information in the special format
         """
-        return f"name: {self.username}, id: {self.id}, phone number: {self.phone_number}, birthday:{self.birthday},join_date: {self.join_date}"
-
-
+        return f"name: {self.username}\n id: {self.id}\n" \
+       f"phone number: {self.phone_number}\n birthday:{self.birthday}\n" \
+       f"join_date: {self.join_date}\n wallet: {self._wallet}\n" \
+       f"subscription: {self.subscription}\n movie list: {self.movie_list}"
+       
 #-----------------------------------------------------------key = "11"-----------------------------------------------------------#
    
-   
     @classmethod
-    def change_username(cls ,username: str, new_username: str):
+    def change_username(cls, username: str, new_username: str):
 
         """
         This function changes the username and phone number
         """  
-        if cls.username_is_not_exsist(new_username):
+        if not cls.username_is_exsist(new_username):
             users_data = cls.users_data()
             users_data[new_username] = users_data.pop(username)
             users_data[new_username].username = new_username
@@ -126,9 +133,8 @@ class User:
             raise exceptions.DuplicateUsernameError   
 
 #-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
-    
     @classmethod
-    def change_phone_number(cls ,username: str, new_phone_number: str = None):
+    def change_phone_number(cls, username: str, new_phone_number: str = None):
 
         """
         This function changes the username and phone number
@@ -150,7 +156,6 @@ class User:
             return True
         raise exceptions.MismatchOfPasswordsError 
     
-
     @classmethod
     def update_password(cls, password: str, username: str, new_password: str):
 
@@ -166,3 +171,25 @@ class User:
                 raise exceptions.PasswordLengthError 
         else:
             raise exceptions.InvalidPasswordError      
+
+
+    @classmethod
+    def charge_wallet(cls, amount:float):
+        users_data = cls.users_data()    
+        cls._wallet+= amount
+        users_data[cls.username]._wallet= cls._wallet
+        cls.save_edited_data(users_data)
+
+
+    @classmethod
+    def by_subscription(cls, type_subscription: str):
+        users_data = cls.users_data()        
+        users_data[cls.username].subscription= type_subscription
+        cls.save_edited_data(users_data)  
+
+    @classmethod
+    def by_movie(cls, movie: object, movie_price: float):
+        users_data = cls.users_data()
+        users_data[cls.username].movie_list.append(movie)
+        users_data[cls.username]._wallet-= movie_price
+        cls.save_edited_data(users_data)  
