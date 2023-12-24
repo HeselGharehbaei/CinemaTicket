@@ -184,12 +184,37 @@ while True:
                                 user_banck_accoun= BankAccount.get_account(account_number) 
                                 amount, banck_account_password, cvv2= receive_information(21) 
                                 if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
-                                    BankAccount.__sub__(float(amount))
+                                    user_banck_accoun.__sub__(float(amount))
                                     user.charge_wallet(amount)
                                 else:
                                     continue
                             elif key == "10":
-                                pass                            
+                                os.system("clear")
+                                key = input("1) Silver ---> 200000 Toman\n"
+                                            "---------------------------------------\n"
+                                            "2) Gold ---> 400000 Toman\n"
+                                            "---------------------------------------\n"
+                                            "3) Cancel\n"
+                                            "---------------------------------------\n"
+                                            "key:")
+                                type_subscription= ''
+                                amount= 0
+                                if key== 1:
+                                    type_subscription= 'Silver'
+                                    amount= 200000
+                                elif key== 2:
+                                    type_subscription= 'Gold'
+                                    amount= 400000  
+                                elif key ==3:  
+                                    break                                     
+                                account_number= receive_information(20)  
+                                user_banck_accoun= BankAccount.get_account(account_number) 
+                                banck_account_password, cvv2= receive_information(23) 
+                                if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
+                                    user_banck_accoun.__sub__(amount)
+                                    user.buy_subscription(type_subscription)
+                                else:
+                                    continue                                 
                             elif key == "11":
                                 pass                                  
                             elif key == "12":
@@ -251,7 +276,7 @@ while True:
                             os.system("clear")
                             amount, banck_account_password, cvv2= receive_information(21) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
-                                BankAccount.__sub__(float(amount))
+                                user_banck_accoun.__sub__(float(amount))
                             else:
                                 continue
                         elif key == "21":
