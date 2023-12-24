@@ -36,25 +36,25 @@ def receive_information(key):
         new_password = input("New password: ") 
         repeat_new_password = input("Repeat new password: ") 
         return  password, new_password, repeat_new_password 
-    elif key == 19:
+    elif key == 20:
         name= input("Name:")
         last_name= input("Last Name:")
         owner= name+last_name
         password= input("Password:")
         balance= input("Balance:")
         return owner, balance, password
-    elif key == 20:
+    elif key == 21:
         account_number= input("Account number:")
         return account_number
-    elif key == 21:
+    elif key == 22:
         amount= input("Amount:")
         banck_account_password= input("Password:")
         cvv2= input("Cvv2:")       
         return  amount, banck_account_password, cvv2
-    elif key == 22:
+    elif key == 23:
         destination_account_number= input("Destination account number:")
         return destination_account_number
-    elif key == 23:
+    elif key == 24:
         banck_account_password= input("Password:")
         cvv2= input("Cvv2:") 
         return  banck_account_password, cvv2
@@ -202,7 +202,7 @@ while True:
                                                     break                                     
                                                 account_number= receive_information(20)  
                                                 user_banck_accoun= BankAccount.get_account(account_number) 
-                                                banck_account_password, cvv2= receive_information(23) 
+                                                banck_account_password, cvv2= receive_information(24) 
                                                 if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                                     user_banck_accoun.__sub__(amount)
                                                     user.buy_subscription(type_subscription)
@@ -236,66 +236,66 @@ while True:
                 key = input("According to the requested operation,"
                 " enter one of the following options:\n"
                 "---------------------------------------\n"    
-                "15 ---> Create account\n"
+                "20 ---> Create account\n"
                 "---------------------------------------\n" 
-                "16 ---> My account\n"
+                "21 ---> My account\n"
                 "---------------------------------------\n"  
-                "17 ---> Back to main menu\n" 
+                "22 ---> Back to main menu\n" 
                 "---------------------------------------\n"                     
                 "key:")
-                if key == "15":
+                if key == "20":
                     os.system("clear")
-                    owner, balance, password= receive_information(19)
+                    owner, balance, password= receive_information(20)
                     BankAccount(owner, balance, password)
-                elif key == "16":
+                elif key == "21":
                     os.system("clear")
-                    account_number= receive_information(20)  
+                    account_number= receive_information(21)  
                     user_banck_accoun= BankAccount.get_account(account_number)                          
                     while True:
                         key = input(f"According to the requested operation,"
                         " enter one of the following options:\n"
                         "---------------------------------------\n"    
-                        "18 ---> Deposit\n"
+                        "23 ---> Deposit\n"
                         "---------------------------------------\n"  
-                        "19 ---> View balance\n"
+                        "24 ---> View balance\n"
                         "---------------------------------------\n"
-                        "20 ---> Withdrawal\n"
+                        "25 ---> Withdrawal\n"
                         "---------------------------------------\n"
-                        "21 ---> Transfer\n"
+                        "26 ---> Transfer\n"
                         "---------------------------------------\n"
-                        "22 ---> Back to bank menu\n" 
+                        "27 ---> Back to bank menu\n" 
                         "---------------------------------------\n"                       
                         "key:")
-                        if key == "18":
+                        if key == "23":
                             os.system("clear")
-                            amount, banck_account_password, cvv2= receive_information(21) 
+                            amount, banck_account_password, cvv2= receive_information(22) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.__add__(float(amount))
                             else:
                                 continue
-                        elif key == "19":
+                        elif key == "24":
                             os.system("clear")
                             print(user_banck_accoun)
-                        elif key == "20":
+                        elif key == "25":
                             os.system("clear")
-                            amount, banck_account_password, cvv2= receive_information(21) 
+                            amount, banck_account_password, cvv2= receive_information(22) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.__sub__(float(amount))
                             else:
                                 continue
-                        elif key == "21":
+                        elif key == "26":
                             os.system("clear")
-                            destination_account_number= receive_information(22)
-                            amount, banck_account_password, cvv2= receive_information(21) 
+                            destination_account_number= receive_information(23)
+                            amount, banck_account_password, cvv2= receive_information(22) 
                             destination_account= BankAccount.get_account(destination_account_number)                                      
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.transfer(destination_account, float(amount))
                             else:
                                 continue
-                        elif key == "22":
+                        elif key == "27":
                             os.system("clear")
                             break
-                elif key == "17":
+                elif key == "22":
                     os.system("clear")
                     break
             except BaseException as e:
