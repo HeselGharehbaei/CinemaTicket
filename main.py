@@ -54,6 +54,10 @@ def receive_information(key):
     elif key == 22:
         destination_account_number= input("Destination account number:")
         return destination_account_number
+    elif key == 23:
+        banck_account_password= input("Password:")
+        cvv2= input("Cvv2:") 
+        return  banck_account_password, cvv2
 
 
 while True:
@@ -149,7 +153,6 @@ while True:
                                                         os.system("clear")
                                                         new_username = receive_information(16)
                                                         user.change_username(new_username)
-                                                        # user.username = new_username
                                                     elif key == "17":
                                                         os.system("clear")
                                                         new_phone_number = receive_information(17)
@@ -176,10 +179,17 @@ while True:
                                 os.system("clear")
                                 pass
                             elif key == "9":
-                                pass
-                            elif key == "10":
                                 os.system("clear")
-                                pass
+                                account_number= receive_information(20)  
+                                user_banck_accoun= BankAccount.get_account(account_number) 
+                                amount, banck_account_password, cvv2= receive_information(21) 
+                                if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
+                                    BankAccount.__sub__(float(amount))
+                                    user.charge_wallet(amount)
+                                else:
+                                    continue
+                            elif key == "10":
+                                pass                            
                             elif key == "11":
                                 pass                                  
                             elif key == "12":
@@ -207,7 +217,7 @@ while True:
                 if key == "15":
                     os.system("clear")
                     owner, balance, password= receive_information(19)
-                    k= BankAccount(owner, balance, password)
+                    BankAccount(owner, balance, password)
                 elif key == "16":
                     os.system("clear")
                     account_number= receive_information(20)  
