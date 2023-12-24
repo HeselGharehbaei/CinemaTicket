@@ -180,13 +180,13 @@ class User:
         self.save_edited_data(users_data)
 
 
-    def by_subscription(self, type_subscription: str):
+    def buy_subscription(self, type_subscription: str):
         users_data = self.users_data()        
         users_data[self.username].subscription= type_subscription
         self.save_edited_data(users_data)  
 
 
-    def by_movie(self, movie: object, movie_price: float):
+    def buy_movie(self, movie: object, movie_price: float):
         users_data = self.users_data()
         users_data[self.username].movie_list.append(movie)
         users_data[self.username]._wallet-= movie_price
