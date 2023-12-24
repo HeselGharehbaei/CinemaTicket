@@ -41,7 +41,11 @@ class User:
         self.save_data()        
 
 
-    def save_data(self):
+    def save_data(self)-> None:
+        """
+        Save parameters of user instance in format of pickle
+        """
+                
         if not self.username_is_exsist(self.username):
             if self.password_is_valid(self.__password):
                 users_data= self.users_data()
@@ -54,13 +58,21 @@ class User:
         
 
     @staticmethod
-    def save_edited_data(users_data):
+    def save_edited_data(users_data)-> None:
+        """
+        The process of saving data in pickle format
+        """
+
         with open('data/users.pickle', 'wb') as file:
             pickle.dump(users_data, file) 
 
 
     @staticmethod
-    def users_data():
+    def users_data()-> None:
+        """
+        The process of load saving data from pickle file
+        """
+        
         file_path = 'data/users.pickle'
         if os.path.isfile(file_path): 
             with open(file_path, 'rb') as file:
@@ -72,6 +84,10 @@ class User:
 
     @classmethod
     def username_is_exsist(cls, username: str) -> bool:
+        """
+        This method checks that the username is not duplicated 
+        """
+
         users_data= cls.users_data()
         if username in users_data:
             return True
@@ -79,7 +95,11 @@ class User:
     
 
     @staticmethod
-    def password_is_valid(password: str) -> bool:   
+    def password_is_valid(password: str) -> bool: 
+        """
+        This method checks that the length of the password is not less than 4
+        """ 
+
         if len(password) >= 4:
             return True
         return False   
@@ -118,7 +138,7 @@ class User:
        
 #-----------------------------------------------------------key = "11"-----------------------------------------------------------#
    
-    def change_username(self, new_username: str):
+    def change_username(self, new_username: str)-> None:
 
         """
         This function changes the username and phone number
@@ -134,7 +154,7 @@ class User:
 
 #-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
 
-    def change_phone_number(self, new_phone_number: str = None):
+    def change_phone_number(self, new_phone_number: str = None)-> None:
 
         """
         This function changes the username and phone number
@@ -146,7 +166,7 @@ class User:
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
     @staticmethod
-    def valid_new_password(new_password: str, repeat_new_password: str):
+    def valid_new_password(new_password: str, repeat_new_password: str)-> bool:
 
         """
         This function cheack the new password
@@ -173,20 +193,38 @@ class User:
             raise exceptions.InvalidPasswordError      
 
 
-    def charge_wallet(self, amount:float):
+    def charge_wallet(self, amount:float)-> None:
+        """
+        This method charges the user'wallet by receiving the amount of money to charge
+            amount (float)
+        """
+
         users_data = self.users_data()    
         self._wallet+= amount
         users_data[self.username]._wallet= self._wallet
         self.save_edited_data(users_data)
 
 
-    def buy_subscription(self, type_subscription: str):
+    def buy_subscription(self, type_subscription: str)-> None:
+        """
+        This method performs the buying process of the selected subscription, either gold or silver
+        Args:
+            type_subscription (str)
+        """
+
         users_data = self.users_data()        
         users_data[self.username].subscription= type_subscription
         self.save_edited_data(users_data)  
 
 
-    def buy_movie(self, movie: object, movie_price: float):
+    def buy_movie(self, movie: object, movie_price: float)-> None:
+        """
+        This method performs the buying process of the selected movie
+        Args:
+            movie (object): _description_
+            movie_price (float): _description_
+        """
+
         users_data = self.users_data()
         users_data[self.username].movie_list.append(movie)
         users_data[self.username]._wallet-= movie_price
