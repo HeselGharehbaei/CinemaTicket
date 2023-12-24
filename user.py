@@ -118,30 +118,30 @@ class User:
        
 #-----------------------------------------------------------key = "11"-----------------------------------------------------------#
    
-    @classmethod
-    def change_username(cls, username: str, new_username: str):
+    def change_username(self, new_username: str):
 
         """
         This function changes the username and phone number
         """  
-        if not cls.username_is_exsist(new_username):
-            users_data = cls.users_data()
-            users_data[new_username] = users_data.pop(username)
+        if not self.username_is_exsist(new_username):
+            users_data = self.users_data()
+            users_data[new_username] = users_data.pop(self.username)
             users_data[new_username].username = new_username
-            cls.save_edited_data(users_data)                    
+            self.save_edited_data(users_data)  
+            self.username= new_username                  
         else:
             raise exceptions.DuplicateUsernameError   
 
 #-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
-    @classmethod
-    def change_phone_number(cls, username: str, new_phone_number: str = None):
+
+    def change_phone_number(self, new_phone_number: str = None):
 
         """
         This function changes the username and phone number
         """  
-        users_data = cls.users_data()
-        users_data[username].phone_number = new_phone_number
-        cls.save_edited_data(users_data)
+        users_data = self.users_data()
+        users_data[self.username].phone_number = new_phone_number
+        self.save_edited_data(users_data)
 
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
@@ -156,40 +156,38 @@ class User:
             return True
         raise exceptions.MismatchOfPasswordsError 
     
-    @classmethod
-    def update_password(cls, password: str, username: str, new_password: str):
+
+    def update_password(self, password: str, new_password: str):
 
         """
         Replacing the new password with the previous password of a user
         """
-        users_data = cls.users_data()
-        if users_data[username].__password == password:
-            if cls.password_is_valid(new_password):
-                users_data[username].__password = new_password
-                cls.save_edited_data(users_data)  
+        users_data = self.users_data()
+        if users_data[self.username].__password == password:
+            if self.password_is_valid(new_password):
+                users_data[self.username].__password = new_password
+                self.save_edited_data(users_data)  
             else:
                 raise exceptions.PasswordLengthError 
         else:
             raise exceptions.InvalidPasswordError      
 
 
-    @classmethod
-    def charge_wallet(cls, amount:float):
-        users_data = cls.users_data()    
-        cls._wallet+= amount
-        users_data[cls.username]._wallet= cls._wallet
-        cls.save_edited_data(users_data)
+    def charge_wallet(self, amount:float):
+        users_data = self.users_data()    
+        self._wallet+= amount
+        users_data[self.username]._wallet= self._wallet
+        self.save_edited_data(users_data)
 
 
-    @classmethod
-    def by_subscription(cls, type_subscription: str):
-        users_data = cls.users_data()        
-        users_data[cls.username].subscription= type_subscription
-        cls.save_edited_data(users_data)  
+    def by_subscription(self, type_subscription: str):
+        users_data = self.users_data()        
+        users_data[self.username].subscription= type_subscription
+        self.save_edited_data(users_data)  
 
-    @classmethod
-    def by_movie(cls, movie: object, movie_price: float):
-        users_data = cls.users_data()
-        users_data[cls.username].movie_list.append(movie)
-        users_data[cls.username]._wallet-= movie_price
-        cls.save_edited_data(users_data)  
+
+    def by_movie(self, movie: object, movie_price: float):
+        users_data = self.users_data()
+        users_data[self.username].movie_list.append(movie)
+        users_data[self.username]._wallet-= movie_price
+        self.save_edited_data(users_data)  

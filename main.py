@@ -91,8 +91,10 @@ while True:
                     if user_type == '1':
                         user_type = UserType.MANAGER
                     elif user_type == '2':
-                        user_type = UserType.NORMAL_USER                         
-                    if User.sign_in(username, password, user_type):
+                        user_type = UserType.NORMAL_USER 
+                    user= User.sign_in(username, password, user_type)                            
+                    if user:
+                        user= User.sign_in(username, password, user_type)
                         while True:
                             key = input("According to the requested operation,"
                             " enter one of the following options:\n"
@@ -126,7 +128,7 @@ while True:
                                         "key:") 
                                         if key == "13":
                                             os.system("clear")
-                                            print(User.sign_in(username, password, user_type))
+                                            print(user)
                                         elif key == "14":
                                             os.system("clear")
                                             while True:
@@ -146,17 +148,17 @@ while True:
                                                     if key == "16":
                                                         os.system("clear")
                                                         new_username = receive_information(16)
-                                                        User.change_username(username, new_username)
-                                                        username = new_username
+                                                        user.change_username(new_username)
+                                                        # user.username = new_username
                                                     elif key == "17":
                                                         os.system("clear")
                                                         new_phone_number = receive_information(17)
-                                                        User.change_phone_number(username, new_phone_number)
+                                                        user.change_phone_number(new_phone_number)
                                                     elif key == "18":
                                                         os.system("clear")
                                                         password, new_password, repeat_new_password = receive_information(18)
-                                                        if User.valid_new_password(new_password, repeat_new_password):
-                                                            User.update_password(password, username, new_password)
+                                                        if user.valid_new_password(new_password, repeat_new_password):
+                                                            user.update_password(password, new_password)
                                                             password= new_password  
                                                         else:
                                                             continue 
