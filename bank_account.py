@@ -59,11 +59,15 @@ class BankAccount(Bank):
         )
 
     def __add__(self, amount: float) -> None:
+        if amount < 0:
+            raise TransferAmount
         if self._balance + amount < self.MIN_BALANCE:
             raise MinBalanceError
         return super().__add__(amount)
 
     def __sub__(self, amount: float) -> None:
+        if amount < 0:
+            raise TransferAmount
         if self._balance - amount < self.MIN_BALANCE:
             raise MinBalanceError
         return super().__sub__(amount)
