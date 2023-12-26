@@ -16,6 +16,7 @@ class Reservation:
         self.capacity = self.cinema[salon]
         self.screen_time = screen_time
         self.data[self.movie.name] = self
+        self.save_data()
 
     def save_data(self):
         with open("data/reservation.pickle", "ab") as file:
