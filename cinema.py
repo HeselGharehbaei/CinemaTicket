@@ -22,7 +22,7 @@ class Cinema:
             self.cinemas_list.clear()
 
     @classmethod
-    def get_ciema(cls, name: str) -> object:
+    def get_cinema(cls, name: str) -> object:
         cinemas = cls.load_cinemas()
         return cinemas[name]
     
