@@ -47,7 +47,7 @@ def receive_information(key):
         account_number= input("Account number:")
         return account_number
     elif key == 22:
-        amount= input("Amount:")
+        amount= float(input("Amount:"))
         banck_account_password= input("Password:")
         cvv2= input("Cvv2:")       
         return  amount, banck_account_password, cvv2
@@ -88,7 +88,7 @@ while True:
                 if key == "4":
                     os.system("clear")
                     username, password, birthday, phone_number = receive_information(4)
-                    User(username, password, birthday, phone_number)
+                    User(username, password, birthday, phone_number).sign_up()
                 elif key == "5":  
                     os.system("clear")
                     user_type, username, password = receive_information(5) 
@@ -245,8 +245,8 @@ while True:
                 "key:")
                 if key == "20":
                     os.system("clear")
-                    owner, balance, password= receive_information(20)
-                    BankAccount(owner, balance, password)
+                    owner, balance, password= receive_information(20)                    
+                    BankAccount(owner, float(balance), password)
                 elif key == "21":
                     os.system("clear")
                     account_number= receive_information(21)  
@@ -270,7 +270,7 @@ while True:
                             os.system("clear")
                             amount, banck_account_password, cvv2= receive_information(22) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
-                                user_banck_accoun.__add__(float(amount))
+                                user_banck_accoun.__add__(amount)
                             else:
                                 continue
                         elif key == "24":
