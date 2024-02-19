@@ -29,30 +29,42 @@ class User:
         self.phone_number = phone_number
         self.id = uuid4()
         self.username = username
-        try:
-            self.birthday = datetime.strptime(birthday, '%d/%m/%Y').date()
-        except :
-            raise exceptions.BirthdateInputFormatError
+        self.birthday= birthday
         self.user_type= user_type
         self.join_date = datetime.now().date() 
         self._wallet= wallet
         self.subscription= subscription
-        self.movie_list= movie_list
-        self.save_data()        
+        self.movie_list= movie_list      
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (self.username, self.__password, self.birthday, self.join_date, 
+                    self.movie_list, self._wallet, self.subscription, self.phone_number) == (
+                other.username, other.__password, other.birthday, other.join_date, 
+                other.movie_list, other._wallet, other.subscription, other.phone_number )
+        return False
+    
+    def __ne__(self, other):
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return False
 
-    def save_data(self)-> None:
+    def sign_up(self)-> None:
         """
         Save parameters of user instance in format of pickle
         """
                 
         if not self.username_is_exsist(self.username):
             if self.password_is_valid(self.__password):
-                users_data= self.users_data()
+                try:
+                    self.birthday= datetime.strptime(self.birthday, '%d/%m/%Y').date()   
+                except:
+                    raise exceptions.BirthdateInputFormatError
+                users_data= self.load_users_data()
                 users_data[self.username]= self
                 self.save_edited_data(users_data)
             else:
-                exceptions.PasswordLengthError       
+                raise exceptions.PasswordLengthError       
         else:
             raise exceptions.DuplicateUsernameError
         
@@ -68,7 +80,7 @@ class User:
 
 
     @staticmethod
-    def users_data()-> None:
+    def load_users_data()-> None:
         """
         The process of load saving data from pickle file
         """
@@ -88,7 +100,7 @@ class User:
         This method checks that the username is not duplicated 
         """
 
-        users_data= cls.users_data()
+        users_data= cls.load_users_data()
         if username in users_data:
             return True
         return False
@@ -103,6 +115,7 @@ class User:
         if len(password) >= 4:
             return True
         return False   
+    
         
 #-----------------------------------------------------------key = "2"-----------------------------------------------------------#
     @classmethod
@@ -112,7 +125,7 @@ class User:
         This function checks the condition that the username be unique
         And  ntered a valid password that belongs to the user we are entering.
         """
-        users_data= cls.users_data()
+        users_data= cls.load_users_data()
         if cls.username_is_exsist(username):         
             if users_data[username].__password == password:
                 if users_data[username].user_type == user_type:
@@ -144,7 +157,7 @@ class User:
         This function changes the username and phone number
         """  
         if not self.username_is_exsist(new_username):
-            users_data = self.users_data()
+            users_data = self.load_users_data()
             users_data[new_username] = users_data.pop(self.username)
             users_data[new_username].username = new_username
             self.save_edited_data(users_data)  
@@ -159,9 +172,10 @@ class User:
         """
         This function changes the username and phone number
         """  
-        users_data = self.users_data()
+        users_data = self.load_users_data()
         users_data[self.username].phone_number = new_phone_number
         self.save_edited_data(users_data)
+        self.phone_number= new_phone_number
 
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
  
@@ -182,11 +196,12 @@ class User:
         """
         Replacing the new password with the previous password of a user
         """
-        users_data = self.users_data()
+        users_data = self.load_users_data()
         if users_data[self.username].__password == password:
             if self.password_is_valid(new_password):
                 users_data[self.username].__password = new_password
                 self.save_edited_data(users_data)  
+                self.__password= new_password
             else:
                 raise exceptions.PasswordLengthError 
         else:
@@ -199,7 +214,7 @@ class User:
             amount (float)
         """
 
-        users_data = self.users_data()    
+        users_data = self.load_users_data()    
         self._wallet+= amount
         users_data[self.username]._wallet= self._wallet
         self.save_edited_data(users_data)
@@ -212,9 +227,10 @@ class User:
             type_subscription (str)
         """
 
-        users_data = self.users_data()        
+        users_data = self.load_users_data()        
         users_data[self.username].subscription= type_subscription
         self.save_edited_data(users_data)  
+        self.subscription= type_subscription
 
 
     def buy_movie(self, movie: object, movie_price: float)-> None:
@@ -225,7 +241,16 @@ class User:
             movie_price (float): _description_
         """
 
-        users_data = self.users_data()
+        users_data = self.load_users_data()
         users_data[self.username].movie_list.append(movie)
         users_data[self.username]._wallet-= movie_price
+        self.movie_list.append(movie)
         self.save_edited_data(users_data)  
+
+
+    @classmethod
+    def delete_user(cls, username):
+        users_data= cls.load_users_data()
+        del users_data[username]
+        cls.save_edited_data(users_data)
+
