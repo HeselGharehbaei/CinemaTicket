@@ -1,7 +1,8 @@
 from user import User, UserType
 from bank_account import BankAccount
 import os
-
+from movie import Movie
+from reservation import Reservation
 
 def receive_information(key):
 
@@ -106,11 +107,9 @@ while True:
                                 "---------------------------------------\n"
                                 "7 ---> Profile\n"
                                 "---------------------------------------\n"    
-                                "8 ---> Movie list\n"
+                                "8 ---> Movie list and Buy movie\n"
                                 "---------------------------------------\n" 
-                                "9 ---> Buy movie\n"
-                                "---------------------------------------\n" 
-                                "10 ---> Back\n"
+                                "9 ---> Back\n"
                                 "---------------------------------------\n"
                                 "key:")               
                                 if key == "7":
@@ -120,45 +119,45 @@ while True:
                                             key = input("According to the requested operation,"
                                             " enter one of the following options:\n"
                                             "---------------------------------------\n"
-                                            "11 ---> View profile\n"
+                                            "10 ---> View profile\n"
                                             "---------------------------------------\n"    
-                                            "12 ---> Edit profile\n"
+                                            "11 ---> Edit profile\n"
                                             "---------------------------------------\n" 
-                                            "13 ---> Charge wallet\n"
+                                            "12 ---> Charge wallet\n"
                                             "---------------------------------------\n" 
-                                            "14 ---> Buy subscription\n"
+                                            "13 ---> Buy subscription\n"
                                             "---------------------------------------\n"                                                                                 
-                                            "15 ---> Back to main menu\n"
+                                            "14 ---> Back to main menu\n"
                                             "---------------------------------------\n"
                                             "key:") 
-                                            if key == "11":
+                                            if key == "10":
                                                 os.system("clear")
                                                 print(user)
-                                            elif key == "12":
+                                            elif key == "11":
                                                 os.system("clear")
                                                 while True:
                                                     try:
                                                         key = input("According to the requested operation,"
                                                         " enter one of the following options:\n"
                                                         "---------------------------------------\n"
-                                                        "16 ---> Edit username \n"
+                                                        "15 ---> Edit username \n"
                                                         "---------------------------------------\n"    
-                                                        "17 ---> Edit phone_number\n"
+                                                        "16 ---> Edit phone_number\n"
                                                         "---------------------------------------\n" 
-                                                        "18 ---> Edit password\n"
+                                                        "17 ---> Edit password\n"
                                                         "---------------------------------------\n"
-                                                        "19 ---> Back to profile \n" 
+                                                        "18 ---> Back to profile \n" 
                                                         "---------------------------------------\n" 
                                                         "key:")                                             
-                                                        if key == "16":
+                                                        if key == "15":
                                                             os.system("clear")
                                                             new_username = receive_information(16)
                                                             user.change_username(new_username)
-                                                        elif key == "17":
+                                                        elif key == "16":
                                                             os.system("clear")
                                                             new_phone_number = receive_information(17)
                                                             user.change_phone_number(new_phone_number)
-                                                        elif key == "18":
+                                                        elif key == "17":
                                                             os.system("clear")
                                                             password, new_password, repeat_new_password = receive_information(18)
                                                             if user.valid_new_password(new_password, repeat_new_password):
@@ -166,22 +165,22 @@ while True:
                                                                 password= new_password  
                                                             else:
                                                                 continue 
-                                                        elif key == "19":
+                                                        elif key == "18":
                                                             os.system("clear")
                                                             break 
                                                     except BaseException as e:
                                                         print(str(e)) 
-                                            elif key == "13":
+                                            elif key == "12":
                                                 os.system("clear")
-                                                account_number= receive_information(20)  
+                                                account_number= receive_information(21)  
                                                 user_banck_accoun= BankAccount.get_account(account_number) 
-                                                amount, banck_account_password, cvv2= receive_information(21) 
+                                                amount, banck_account_password, cvv2= receive_information(22) 
                                                 if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                                     user_banck_accoun.__sub__(float(amount))
                                                     user.charge_wallet(amount)
                                                 else:
                                                     continue
-                                            elif key == "14":
+                                            elif key == "13":
                                                 os.system("clear")
                                                 key = input("1) Silver ---> 200000 Toman\n"
                                                             "---------------------------------------\n"
@@ -208,18 +207,25 @@ while True:
                                                     user.buy_subscription(type_subscription)
                                                 else:
                                                     continue                                            
-                                            elif key == "15":
+                                            elif key == "14":
                                                 os.system("clear")
                                                 break
                                         except BaseException as e:
                                             print(str(e))                          
                                 elif key == "8":
                                     os.system("clear")
-                                    pass
+                                    movies= Movie.load_movies()
+                                    movies_list= (list(movies.values()))
+                                    [print(f"{movies_list.index(movie)}:",movie) for movie in movies_list]
+                                    number_of_movie= input("Enter number of movie you want:")
+                                    selected_movie= movies_list[int(number_of_movie)]
+                                    reservation_list_of_the_movie= Reservation.load()[selected_movie.name]
+                                    selected_movie_price= reservation_list_of_the_movie.final_price(user)
+                                    print(f"movie_final_price: {selected_movie_price}")
+                                    sure_for_movie_price_agreemant= input("If you sure from the movie's price Enter number 1 or not number 0:")
+                                    if sure_for_movie_price_agreemant== "1" and user.check_wallet_balance(selected_movie_price):
+                                        reservation_list_of_the_movie.make_reservation(user)                 
                                 elif key == "9":
-                                    os.system("clear")
-                                    pass                        
-                                elif key == "10":
                                     os.system("clear") 
                                     break                           
                             except BaseException as e:
@@ -236,18 +242,18 @@ while True:
                 key = input("According to the requested operation,"
                 " enter one of the following options:\n"
                 "---------------------------------------\n"    
-                "20 ---> Create account\n"
+                "19 ---> Create account\n"
                 "---------------------------------------\n" 
-                "21 ---> My account\n"
+                "20 ---> My account\n"
                 "---------------------------------------\n"  
-                "22 ---> Back to main menu\n" 
+                "21 ---> Back to main menu\n" 
                 "---------------------------------------\n"                     
                 "key:")
-                if key == "20":
+                if key == "19":
                     os.system("clear")
                     owner, balance, password= receive_information(20)                    
                     BankAccount(owner, float(balance), password)
-                elif key == "21":
+                elif key == "20":
                     os.system("clear")
                     account_number= receive_information(21)  
                     user_banck_accoun= BankAccount.get_account(account_number)                          
@@ -255,47 +261,46 @@ while True:
                         key = input(f"According to the requested operation,"
                         " enter one of the following options:\n"
                         "---------------------------------------\n"    
-                        "23 ---> Deposit\n"
+                        "22 ---> Deposit\n"
                         "---------------------------------------\n"  
-                        "24 ---> View balance\n"
+                        "23 ---> View balance\n"
                         "---------------------------------------\n"
-                        "25 ---> Withdrawal\n"
+                        "24 ---> Withdrawal\n"
                         "---------------------------------------\n"
-                        "26 ---> Transfer\n"
+                        "25 ---> Transfer\n"
                         "---------------------------------------\n"
-                        "27 ---> Back to bank menu\n" 
+                        "26 ---> Back to bank menu\n" 
                         "---------------------------------------\n"                       
                         "key:")
-                        if key == "23":
+                        if key == "22":
                             os.system("clear")
                             amount, banck_account_password, cvv2= receive_information(22) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.__add__(amount)
                             else:
                                 continue
-                        elif key == "24":
+                        elif key == "23":
                             os.system("clear")
                             print(user_banck_accoun)
-                        elif key == "25":
+                        elif key == "24":
                             os.system("clear")
                             amount, banck_account_password, cvv2= receive_information(22) 
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.__sub__(float(amount))
                             else:
                                 continue
-                        elif key == "26":
+                        elif key == "25":
                             os.system("clear")
                             destination_account_number= receive_information(23)
                             amount, banck_account_password, cvv2= receive_information(22) 
                             destination_account= BankAccount.get_account(destination_account_number)                                      
                             if user_banck_accoun.check_infoـvalidation(cvv2, banck_account_password):
                                 user_banck_accoun.transfer(destination_account, float(amount))
-                            else:
-                                continue
-                        elif key == "27":
+
+                        elif key == "26":
                             os.system("clear")
                             break
-                elif key == "22":
+                elif key == "21":
                     os.system("clear")
                     break
             except BaseException as e:
