@@ -1,3 +1,9 @@
+import os, sys,json
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.append(parent_dir)
+
+
 from argparse import ArgumentParser
 from cinema import Cinema
 
@@ -11,7 +17,7 @@ def main():
         "--salon_count", type=int, help="Number of salons in the cinema", required=True
     )
     parser.add_argument(
-        "--salons", type=dict, help="Dictionary representing salons", required=True
+        "--salons", type=json.loads, help="Dictionary representing salons", required=True
     )
 
     args = parser.parse_args()
