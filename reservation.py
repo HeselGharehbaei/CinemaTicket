@@ -13,7 +13,7 @@ class Reservation:
         self.movie = movie
         self.cinema = cinema
         self.salon = salon
-        self.capacity = self.cinema[salon]
+        self.capacity = self.cinema.salon_count
         self.screen_time = screen_time
         self.data[self.movie.name] = self
         self.save_data()
