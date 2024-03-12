@@ -233,6 +233,17 @@ class User:
         self.subscription= type_subscription
 
 
+    def check_wallet_balance(self, movie_price: float)-> None:
+        users_data = self.load_users_data()
+        if users_data[self.username]._wallet>= movie_price:
+            return True
+        else:
+            raise exceptions.WalletError    
+
+
+
+
+
     def buy_movie(self, movie: object, movie_price: float)-> None:
         """
         This method performs the buying process of the selected movie
@@ -242,10 +253,12 @@ class User:
         """
 
         users_data = self.load_users_data()
-        users_data[self.username].movie_list.append(movie)
         users_data[self.username]._wallet-= movie_price
-        self.movie_list.append(movie)
-        self.save_edited_data(users_data)  
+        users_data[self.username].movie_list.append(movie.name)
+        self.movie_list.append(movie.name)
+        self._wallet-=movie_price
+        self.save_edited_data(users_data)   
+
 
 
     @classmethod
