@@ -1,3 +1,9 @@
+import os, sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.append(parent_dir)
+
+
 from argparse import ArgumentParser
 from datetime import datetime
 from reservation import Reservation
@@ -21,7 +27,7 @@ def main():
         type=str,
     )
     parser.add_argument(
-        "--screentime", help="screening date and time", required=True, type=datetime
+        "--screentime", help="screening date and time", required=True, type=lambda s: datetime.strptime(s, '%m/%d/%y %H:%M:%S')
     )
 
     args = parser.parse_args()
