@@ -70,4 +70,10 @@ class InvalidUsernameError(BaseException):
 class BirthdateInputFormatError(BaseException):
     def __init__(self, message="The input format for birthday is wrong. Please try in the format dd/mm/yyyy."):
         super().__init__(message)    
+
+
+class WalletError(BaseException):
+    def __init__(self, message="Charge the wallet"):
+        super().__init__(message) 
+
     
