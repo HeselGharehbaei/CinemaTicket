@@ -99,7 +99,6 @@ while True:
                         user_type = UserType.NORMAL_USER 
                     user= User.sign_in(username, password, user_type)                            
                     if user:
-                        user= User.sign_in(username, password, user_type)
                         while True:
                             try:
                                 key = input("According to the requested operation,"
