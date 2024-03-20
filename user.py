@@ -4,6 +4,27 @@ from enum import Enum
 from utils import exceptions
 import os
 import pickle
+import logging
+
+
+logger= logging.getLogger(__name__)
+
+file_h= logging.FileHandler('user.log')
+stream_h= logging.StreamHandler()
+
+file_f= logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+stream_f= logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+
+file_h.setFormatter(file_f)
+stream_h.setFormatter(stream_f)
+
+file_h.setLevel(logging.ERROR)
+stream_h.setLevel(logging.INFO)
+
+logger.addHandler(file_h)
+logger.addHandler(stream_h)
+
+logger.setLevel(logging.INFO)
 
 
 class UserType(Enum):
@@ -59,10 +80,12 @@ class User:
                 try:
                     self.birthday= datetime.strptime(self.birthday, '%d/%m/%Y').date()   
                 except:
+                    logger.error("BirthdateInputFormatError")
                     raise exceptions.BirthdateInputFormatError
                 users_data= self.load_users_data()
                 users_data[self.username]= self
                 self.save_edited_data(users_data)
+                logger.info(f"User with username: {self.username} is created")
             else:
                 raise exceptions.PasswordLengthError       
         else:
@@ -129,12 +152,16 @@ class User:
         if cls.username_is_exsist(username):         
             if users_data[username].__password == password:
                 if users_data[username].user_type == user_type:
+                    logger.info(f"Welcome {username} to cinematicket platform")
                     return users_data[username]
                 else:
+                    logger.error("AccessError")
                     raise exceptions.AccessError
             else:
+                logger.error("InvalidPasswordError")
                 raise exceptions.InvalidPasswordError
         else:
+            logger.error("InvalidUsernameError")
             raise exceptions.InvalidUsernameError
 
 #-----------------------------------------------------------key = "8"-----------------------------------------------------------#
@@ -144,6 +171,7 @@ class User:
         This function use to show user
         information in the special format
         """
+        logger.info(f"Show {self.username} informations")
         return f"name: {self.username}\n id: {self.id}\n" \
        f"phone number: {self.phone_number}\n birthday:{self.birthday}\n" \
        f"join_date: {self.join_date}\n wallet: {self._wallet}\n" \
@@ -161,8 +189,10 @@ class User:
             users_data[new_username] = users_data.pop(self.username)
             users_data[new_username].username = new_username
             self.save_edited_data(users_data)  
-            self.username= new_username                  
+            logger.info(f"{self.username} is seccessfully changed to {new_username} ") 
+            self.username= new_username                 
         else:
+            logger.error("DuplicateUsernameError")
             raise exceptions.DuplicateUsernameError   
 
 #-----------------------------------------------------------key = "12"-----------------------------------------------------------#   
@@ -175,6 +205,7 @@ class User:
         users_data = self.load_users_data()
         users_data[self.username].phone_number = new_phone_number
         self.save_edited_data(users_data)
+        logger.info(f"{self.phone_number} is seccessfully changed to {new_phone_number}") 
         self.phone_number= new_phone_number
 
 #-----------------------------------------------------------key = "13"-----------------------------------------------------------#
@@ -201,10 +232,13 @@ class User:
             if self.password_is_valid(new_password):
                 users_data[self.username].__password = new_password
                 self.save_edited_data(users_data)  
+                logger.info(f"{self.username}'s password is seccessfully changed ") 
                 self.__password= new_password
             else:
+                logger.error("PasswordLengthError ")
                 raise exceptions.PasswordLengthError 
         else:
+            logger.error("InvalidPasswordError")
             raise exceptions.InvalidPasswordError      
 
 
@@ -218,6 +252,7 @@ class User:
         self._wallet+= amount
         users_data[self.username]._wallet= self._wallet
         self.save_edited_data(users_data)
+        logger.info(f"{self.username}'s wallet is seccessfully charged {amount}") 
 
 
     def buy_subscription(self, type_subscription: str)-> None:
@@ -231,6 +266,7 @@ class User:
         users_data[self.username].subscription= type_subscription
         self.save_edited_data(users_data)  
         self.subscription= type_subscription
+        logger.info(f"{type_subscription} is seccessfully bought") 
 
 
     def check_wallet_balance(self, movie_price: float)-> None:
@@ -238,6 +274,7 @@ class User:
         if users_data[self.username]._wallet>= movie_price:
             return True
         else:
+            logger.error("WalletError")
             raise exceptions.WalletError    
 
 
@@ -258,6 +295,7 @@ class User:
         self.movie_list.append(movie.name)
         self._wallet-=movie_price
         self.save_edited_data(users_data)   
+        logger.info(f"{movie.name} is seccessfully bought") 
 
 
 
@@ -266,4 +304,5 @@ class User:
         users_data= cls.load_users_data()
         del users_data[username]
         cls.save_edited_data(users_data)
+        logger.info(f"{username} is seccessfully deleted") 
 
