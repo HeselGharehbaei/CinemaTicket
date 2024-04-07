@@ -20,14 +20,14 @@ it is being done in collaboration with these following developers:
 ---
 ### the prototypes of **_CinemaTicket_** project:
 
-![prototype](<Screenshot from 2024-03-29 21-56-30.png>)
-![prototype](<Screenshot from 2024-03-29 21-58-46.png>)
-![prototype](<Screenshot from 2024-03-29 21-52-00.png>)
+![prototype](<pic_2.png>)
+![prototype](<pic_3.png>)
+![prototype](<pic_1.png>)
 ---
 
 #### all project options:
 
-![options](<Screenshot from 2024-03-29 22-13-06.png>)
+![options](<pic_4.png>)
 
 ### Installation
 Clone the repository:  
