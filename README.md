@@ -12,7 +12,6 @@ BankAccount Application: Facilitates secure payment transactions using CVV2 and 
 Discount Options: Applies discounts based on specified criteria, enhancing the user experience.  
 Order History: Maintains a record of users' order history for reference.  
 
-
 it is being done in collaboration with these following developers:  
 **_Hesel Gharehbaei_** [@HeselGharehbaei](https://github.com/HeselGharehbaei)  
 **_Mahsa Rahimimanesh_** [@MahsaRahimimanesh](https://github.com/MahsaRah99)  
