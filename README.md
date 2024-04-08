@@ -12,5 +12,78 @@ BankAccount Application: Facilitates secure payment transactions using CVV2 and 
 Discount Options: Applies discounts based on specified criteria, enhancing the user experience.  
 Order History: Maintains a record of users' order history for reference.  
 
-## Menu
-![image](https://github.com/MahsaRah99/CinemaTicket/assets/133171171/b7717532-0cec-42ed-9a9f-f559045c237a)
+it is being done in collaboration with these following developers:  
+**_Hesel Gharehbaei_** [@HeselGharehbaei](https://github.com/HeselGharehbaei)  
+**_Mahsa Rahimimanesh_** [@MahsaRahimimanesh](https://github.com/MahsaRah99)  
+
+---
+### the prototypes of **_CinemaTicket_** project:
+
+![prototype](<pic_2.png>)
+![prototype](<pic_3.png>)
+![prototype](<pic_1.png>)
+---
+
+#### all project options:
+
+![options](<pic_4.png>)
+
+### Installation
+Clone the repository:  
+Visit [**GitHub Repository**](https://github.com/MahsaRah99/CinemaTicket)  
+or  
+Copy the [**_SSH Key_**](git@github.com:MahsaRah99/CinemaTicket.git)  
+
+---
+## Usage
+### 1) Create a virtual environment and activate it:  
+> ## for linux:
+> **1. create:**  
+>
+>        python3 -m venv env  
+> **2. activate:**
+>
+>        source env/bin/activate
+
+> ## for windows:
+> **1. create:**   
+>
+>     python -m venv env
+>    
+>
+> **2. activate:**
+>
+>     env/Scripts/activate       
+>
+---
+
+### 2) Inserting movie and cinema data: 
+
+#### run script files with arguman in terminal:
+> **1. create manager:**
+>
+>        ppython scripts/create_managers.py (argumans) 
+>
+
+> **2. create movie:**
+>
+>        python scripts/create_movie.py (argumans) 
+>
+
+> **3. create cinema:**
+>
+>        python scripts/create_cinema.py (argumans) 
+>
+
+> **4. create reservation:**
+>
+>        python scripts/create_reservations.py (argumans) 
+>
+
+
+### 3) Run main menu and use the platform: 
+>
+>        python main.py 
+>
+
+---
